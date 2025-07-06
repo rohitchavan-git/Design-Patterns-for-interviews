@@ -1,0 +1,677 @@
+Index: src/main/java/prototype/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/prototype/User.java b/src/main/java/prototype/User.java
+new file mode 100644
+--- /dev/null	(date 1751701802030)
++++ b/src/main/java/prototype/User.java	(date 1751701802030)
+@@ -0,0 +1,31 @@
++package prototype;
++
++
++interface Prototype {
++    Prototype clone();
++}
++
++public class User implements Prototype{
++    private final String fname;
++    private final String lname;
++
++    public User(String fname , String lname) {
++        this.fname = fname;
++        this.lname = lname;
++    }
++    private User(User user){
++        this.fname=user.fname;
++        this.lname= user.lname;
++    }
++
++
++    @Override
++    public Prototype clone() {
++        return new User(this);
++    }
++
++    @Override
++    public String toString() {
++        return fname+" "+lname;
++    }
++}
+Index: src/main/java/prototype/Simple.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/prototype/Simple.java b/src/main/java/prototype/Simple.java
+new file mode 100644
+--- /dev/null	(date 1751647761141)
++++ b/src/main/java/prototype/Simple.java	(date 1751647761141)
+@@ -0,0 +1,11 @@
++package prototype;
++
++public class Simple {
++    public static void main(String[] args) {
++        User user = new User("Rohit","Chavan");
++        User clone = (User) user.clone();
++
++        System.out.println("original Obj :"+user);
++        System.out.println("prototype Obj :"+clone);
++    }
++}
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1748155237419)
++++ b/.idea/encodings.xml	(date 1748155237419)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: src/main/java/singleton/Simple.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/singleton/Simple.java b/src/main/java/singleton/Simple.java
+new file mode 100644
+--- /dev/null	(date 1751649220987)
++++ b/src/main/java/singleton/Simple.java	(date 1751649220987)
+@@ -0,0 +1,160 @@
++package singleton;
++
++import java.lang.reflect.Constructor;
++import java.lang.reflect.InvocationTargetException;
++
++class Singleton1 {
++
++    private Singleton1(){}
++
++    private final static Singleton1 instance=new Singleton1();
++
++    public static Singleton1 getInstance() {
++        return instance;
++    }
++}
++
++class Singleton2{
++
++    private static Singleton2 instance;
++
++    private Singleton2(){}
++
++    public static Singleton2 getInstance() {
++        if(instance == null){
++            instance = new Singleton2();
++        }
++        return instance;
++    }
++}
++
++class Singleton3{
++
++    private static Singleton3 instance;
++
++    private Singleton3(){}
++    public synchronized static Singleton3 getInstance() {
++        if(instance == null){
++            instance = new Singleton3();
++        }
++        return instance;
++    }
++}
++
++class Singleton4{
++
++    private volatile static Singleton4 instance;
++
++    private Singleton4(){}
++
++    public static Singleton4 getInstance() {
++
++        if(instance == null){
++            synchronized (Singleton4.class){
++                if(instance == null){
++                    instance = new Singleton4();
++                }
++            }
++        }
++        return instance;
++    }
++}
++
++
++class Singleton5{
++
++    private static  boolean instanceCreated=false;
++
++     static class  SingletonHolder {
++        private static final Singleton5 singleton5 = new Singleton5();
++    }
++    private Singleton5(){
++         if (instanceCreated){
++             throw new RuntimeException("instance is already created .");
++         }
++         instanceCreated=true;
++    }
++
++    public static Singleton5 getInstance() {
++        return SingletonHolder.singleton5;
++    }
++}
++
++
++
++public class Simple {
++
++    public static void main(String[] args) throws InterruptedException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
++
++        Runnable task = ()->{
++            Singleton1 instance = Singleton1.getInstance();
++            System.out.println("singleton1 instance" + instance);
++        };
++        Thread thread= new Thread(task);
++        Thread thread1=new Thread(task);
++        thread.start();
++        thread1.start();
++
++        Runnable task1 = ()->{
++            Singleton2 instance = Singleton2.getInstance();
++            System.out.println("singleton2 instance" + instance);
++        };
++        Thread thread2= new Thread(task1);
++        Thread thread3=new Thread(task1);
++        thread2.start();
++        thread3.start();
++
++        Runnable task2 = ()->{
++            Singleton3 instance = Singleton3.getInstance();
++            System.out.println("singleton3 instance" + instance);
++        };
++        Thread thread4= new Thread(task2);
++        Thread thread5=new Thread(task2);
++        thread4.start();
++        thread5.start();
++
++        Runnable task3 = ()->{
++            Singleton4 instance = Singleton4.getInstance();
++            System.out.println("singleton4 instance" + instance);
++        };
++        Thread thread6= new Thread(task3);
++        Thread thread7=new Thread(task3);
++        thread6.start();
++        thread7.start();
++
++        Runnable task4 = ()->{
++            Singleton5 instance = Singleton5.getInstance();
++            System.out.println("singleton5 instance" + instance);
++        };
++        Thread thread8= new Thread(task4);
++        Thread thread9=new Thread(task4);
++        thread8.start();
++        thread9.start();
++
++
++        Singleton5 in= Singleton5.getInstance();
++
++        Constructor<Singleton5> declaredConstructor = Singleton5.class.getDeclaredConstructor();
++
++        declaredConstructor.setAccessible(true);
++        Singleton5 singleton5 = declaredConstructor.newInstance();
++
++        System.out.println("reflection break singleton instance 1 " + in + " instance 2 " + singleton5);
++
++        thread.join();
++        thread1.join();
++        thread2.join();
++        thread3.join();
++        thread4.join();
++        thread5.join();
++        thread6.join();
++        thread7.join();
++        thread8.join();
++        thread9.join();
++
++
++
++
++
++    }
++}
+Index: src/main/java/adapter/LegacyXmlLogger.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/adapter/LegacyXmlLogger.java b/src/main/java/adapter/LegacyXmlLogger.java
+new file mode 100644
+--- /dev/null	(date 1751797740910)
++++ b/src/main/java/adapter/LegacyXmlLogger.java	(date 1751797740910)
+@@ -0,0 +1,14 @@
++package adapter;
++
++public class LegacyXmlLogger {
++    private final String xmlLogger;
++
++    public LegacyXmlLogger(String xmlLogger) {
++        this.xmlLogger = xmlLogger;
++    }
++
++    public String getXmlLogger() {
++        return xmlLogger;
++    }
++
++}
+Index: src/main/java/Decorator/Simple.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Decorator/Simple.java b/src/main/java/Decorator/Simple.java
+new file mode 100644
+--- /dev/null	(date 1751644225363)
++++ b/src/main/java/Decorator/Simple.java	(date 1751644225363)
+@@ -0,0 +1,68 @@
++package Decorator;
++
++
++interface  Pizza {
++    String getDescription();
++    int getPrice();
++}
++class BasePizza implements Pizza {
++
++    @Override
++    public String getDescription() {
++        return "normal base pizza";
++    }
++
++    @Override
++    public int getPrice() {
++        return 10;
++    }
++}
++
++abstract class PizzaDecorator implements Pizza {
++
++    protected Pizza decoratedPizza;
++    public PizzaDecorator(Pizza pizza) {
++       decoratedPizza = pizza;
++    }
++}
++class PannerDecorator extends PizzaDecorator {
++    public PannerDecorator(Pizza pizza) {
++        super(pizza);
++    }
++
++    @Override
++    public String getDescription() {
++        return "panner added " + decoratedPizza.getDescription();
++    }
++
++    @Override
++    public int getPrice() {
++        return 12 + decoratedPizza.getPrice();
++    }
++}
++class CheeseDecorator extends PizzaDecorator {
++    public CheeseDecorator(Pizza pizza) {
++        super(pizza);
++    }
++
++    @Override
++    public String getDescription() {
++        return "chess added  "+ decoratedPizza.getDescription();
++    }
++
++    @Override
++    public int getPrice() {
++        return 12 + decoratedPizza.getPrice();
++    }
++}
++public class Simple {
++
++    public static void main(String[] args) {
++
++        Pizza pizza =  new CheeseDecorator( new PannerDecorator(new BasePizza()));
++
++        System.out.println(pizza.getDescription());
++        System.out.println(pizza.getPrice());
++
++    }
++}
+Index: src/main/java/adapter/Simple.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/adapter/Simple.java b/src/main/java/adapter/Simple.java
+new file mode 100644
+--- /dev/null	(date 1751642535794)
++++ b/src/main/java/adapter/Simple.java	(date 1751642535794)
+@@ -0,0 +1,14 @@
++package adapter;
++
++
++public class Simple {
++
++    public static void main(String[] args) {
++
++        LegacyXmlLogger legacyXmlLogger = new LegacyXmlLogger("<person><name>John</name><age>30</age></person>");
++        JsonAdapter convertedJson = new XMlToJsonConvertor(legacyXmlLogger);
++        System.out.println(convertedJson.convert());
++    }
++
++
++}
+Index: src/main/java/factoryMethod/Simple.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/factoryMethod/Simple.java b/src/main/java/factoryMethod/Simple.java
+new file mode 100644
+--- /dev/null	(date 1751641325542)
++++ b/src/main/java/factoryMethod/Simple.java	(date 1751641325542)
+@@ -0,0 +1,93 @@
++package factoryMethod;
++
++enum BuggerType{
++    CHESS, VEGAN, DELUXE_CHESS,DELUXE_VEGAN;
++}
++
++abstract  class Bugger{
++    abstract void doSomething();
++}
++class ChessBugger extends Bugger{
++    @Override
++    void doSomething() {
++        System.out.println("Do something chess");
++    }
++}
++
++class VeganBugger extends Bugger{
++    @Override
++    void doSomething() {
++        System.out.println("Do something vegan");
++    }
++}
++
++class DeluxeBugger extends Bugger{
++    @Override
++    void doSomething() {
++        System.out.println("Do something deluxe Chess");
++    }
++}
++class DeluxeVegan extends Bugger{
++    @Override
++    void doSomething() {
++        System.out.println("Do something deluxe vegan");
++    }
++}
++
++
++@FunctionalInterface
++interface BuggerStore {
++
++    Bugger createBugger(BuggerType type);
++
++    default  Bugger orderBugger(BuggerType type){
++        Bugger bugger = createBugger(type);
++        if (bugger != null) {
++            bugger.doSomething();
++        }else{
++            System.out.println("sorry we dont serve " + type.name() + " buggers");
++        }
++        return bugger;
++    }
++}
++
++class ChessStore implements BuggerStore {
++
++    @Override
++    public Bugger createBugger(BuggerType type) {
++        if (type == BuggerType.CHESS) {
++            return new ChessBugger();
++        }else if (type == BuggerType.DELUXE_CHESS){
++            return new DeluxeBugger();
++        }
++        return null;
++    }
++}
++
++class VeganStore implements BuggerStore{
++
++    @Override
++    public Bugger createBugger(BuggerType type) {
++        if (type == BuggerType.VEGAN){
++            return new VeganBugger();
++        }else if (type == BuggerType.DELUXE_VEGAN){
++            return new DeluxeVegan();
++        }
++        return null;
++    }
++}
++
++public class Simple {
++
++    public static void orderBuggerFrom(BuggerStore buggerStore,BuggerType type){
++        buggerStore.orderBugger(type);
++    }
++
++    public static void main(String[] args) {
++
++        orderBuggerFrom(new ChessStore(),BuggerType.CHESS);
++        orderBuggerFrom(new ChessStore(),BuggerType.VEGAN);
++
++        //
++    }
++}
+Index: src/main/java/adapter/JsonAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/adapter/JsonAdapter.java b/src/main/java/adapter/JsonAdapter.java
+new file mode 100644
+--- /dev/null	(date 1751642535789)
++++ b/src/main/java/adapter/JsonAdapter.java	(date 1751642535789)
+@@ -0,0 +1,5 @@
++package adapter;
++
++public interface JsonAdapter {
++    String convert();
++}
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null	(date 1748155016355)
++++ b/.gitignore	(date 1748155016355)
+@@ -0,0 +1,38 @@
++target/
++!.mvn/wrapper/maven-wrapper.jar
++!**/src/main/**/target/
++!**/src/test/**/target/
++
++### IntelliJ IDEA ###
++.idea/modules.xml
++.idea/jarRepositories.xml
++.idea/compiler.xml
++.idea/libraries/
++*.iws
++*.iml
++*.ipr
++
++### Eclipse ###
++.apt_generated
++.classpath
++.factorypath
++.project
++.settings
++.springBeans
++.sts4-cache
++
++### NetBeans ###
++/nbproject/private/
++/nbbuild/
++/dist/
++/nbdist/
++/.nb-gradle/
++build/
++!**/src/main/**/build/
++!**/src/test/**/build/
++
++### VS Code ###
++.vscode/
++
++### Mac OS ###
++.DS_Store
+\ No newline at end of file
+Index: src/main/java/adapter/XMlToJsonConvertor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/adapter/XMlToJsonConvertor.java b/src/main/java/adapter/XMlToJsonConvertor.java
+new file mode 100644
+--- /dev/null	(date 1751797753551)
++++ b/src/main/java/adapter/XMlToJsonConvertor.java	(date 1751797753551)
+@@ -0,0 +1,26 @@
++package adapter;
++
++import org.json.JSONObject;
++import org.json.XML;
++
++public class XMlToJsonConvertor  implements  JsonAdapter{
++    private final LegacyXmlLogger legacyXmlLogger;
++
++    public XMlToJsonConvertor(LegacyXmlLogger legacyXmlLogger) {
++        this.legacyXmlLogger = legacyXmlLogger;
++    }
++
++
++
++
++
++    @Override
++    public String convert() {
++        String xml = legacyXmlLogger.getXmlLogger();
++        JSONObject jsonObject = XML.toJSONObject(xml);
++        return jsonObject.toString(2); // pretty print
++    }
++
++
++}
++
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1748155023213)
++++ b/.idea/.gitignore	(date 1748155023213)
+@@ -0,0 +1,10 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Environment-dependent path to Maven home directory
++/mavenHomeManager.xml
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1748155023336)
++++ b/.idea/vcs.xml	(date 1748155023336)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+new file mode 100644
+--- /dev/null	(date 1751642114432)
++++ b/pom.xml	(date 1751642114432)
+@@ -0,0 +1,25 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++
++    <groupId>org.example</groupId>
++    <artifactId>Design-Patterns-for-interviews</artifactId>
++    <version>1.0-SNAPSHOT</version>
++
++    <properties>
++        <maven.compiler.source>17</maven.compiler.source>
++        <maven.compiler.target>17</maven.compiler.target>
++        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    </properties>
++
++    <dependencies>
++        <dependency>
++            <groupId>org.json</groupId>
++            <artifactId>json</artifactId>
++            <version>20240303</version>
++        </dependency>
++
++    </dependencies>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1748155023331)
++++ b/.idea/misc.xml	(date 1748155023331)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="MavenProjectsManager">
++    <option name="originalFiles">
++      <list>
++        <option value="$PROJECT_DIR$/pom.xml" />
++      </list>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
